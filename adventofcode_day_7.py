@@ -45,15 +45,13 @@ for rule in bag_rules:
 # print(len(good_bags), "good bags:", good_bags)
 print(len(good_bags))
 
-f = open("data/day_7_part_2.txt")
+f = open("data/day_7_part_2_test_2.txt")
 test_data_part_2 = ''.join(f.readlines())
 
 bag_rules = test_data_part_2
 
 bag_rules = bag_rules.split('\n')
 
-print(bag_rules)
-good_bags = set()
 bag_count = 0
 
 
@@ -63,51 +61,37 @@ def sum_inner_bags(bag_amt, bag_desc, bag_sum=0):
 
     for rule in bag_rules:
         if f'{bag_desc} bags contain' in rule:
-            print(bag_amt, rule)
+            print(rule)
 
             if 'contain no other bags.' in rule:
+                bags_inside = 0
                 break
 
             for part in rule.split():
                 if part.isdigit():
                     bags_inside += int(part)
-            print(bags_inside * bag_amt)
-
-            # # check if no more
-
-            # if bags_inside == 0:
-            #     break
-
-            # time.sleep(1)
 
             inner_bags = rule.split('contain ')[1].split()
-            # print(inner_bags)
+
             bag_iter = 0
             increment = 0
-            #
-            while bag_iter * 4 < len(inner_bags):
-                # time.sleep(1)
 
+            while bag_iter * 4 < len(inner_bags):
                 increment = bag_iter * 4
                 inner_bag_amt = int(inner_bags[increment])
                 inner_bag_desc = f'{inner_bags[increment + 1]} {inner_bags[increment + 2]}'
 
-                print('Inner Bag:',inner_bag_amt, inner_bag_desc)
-                print('Current bag_sum:',bag_sum)
-                # if "other bags." not in inner_bag:
-                bag_sum += sum_inner_bags(inner_bag_amt, inner_bag_desc, bags_inside * bag_sum*bag_amt)
-                print('New bag_sum:',bag_sum)
+                bag_sum = sum_inner_bags(inner_bag_amt * bag_amt, inner_bag_desc, bag_sum)
 
-                # else:
-                #     pass
                 bag_iter += 1
 
-    return (bags_inside * bag_amt) + bag_sum
+    # print(bag_amt, rule, '| curr_bag_sum:', (bag_amt * bags_inside) + bag_sum)
+    return (bag_amt * bags_inside) + bag_sum
 
 
 for rule in bag_rules:
     if 'shiny gold bags contain' in rule:
-
+        print(rule)
         inner_bags = rule.split('contain ')[1].split()
 
         bag_iter = 0
@@ -118,7 +102,7 @@ for rule in bag_rules:
             bag_desc = f'{inner_bags[increment + 1]} {inner_bags[increment + 2]}'
             bag_count += int(inner_bags[increment])
             bag_count += int(sum_inner_bags(int(inner_bags[increment]), bag_desc))
-
+            print('\nCurrent Bag Count(', bag_desc, '):', bag_count, '\n')
             bag_iter += 1
 
         # search_for_bag
